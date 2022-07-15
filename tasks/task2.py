@@ -1,164 +1,117 @@
-# =============================================================================
-# № 1 c tail и head
-# Есть два несвязанных друг с другом индекса (в реализации с/с++ это были бы указатели), каждый из
-# которых имеет свое назначение, а именно:
-# head всегда указывает на ячейку, начиная с которой требуется считывает данные из буфера;
-# tail всегда указывает на ячейку, начиная с которой требуется записывать данные в буфер.
-# Преимущество: каждая переменная играет свою конкретную роль, легко разобраться в коде.
-# Недостаток: при написании кода мне показалось, что количество переменных избыточно, так как
-# после первого полного заполнении буфера при дальнейшем затирании старых значений tail и head всегда двигаются вместе и рядом.
-# Что логично, так как структура данных закольцована. В виду этого можно было бы избавиться от одной из них,
-# оставив лишь tail, что и показано в примере №2.
-# =============================================================================
+class FirstCircBuf:
+    """Класс кольцевой буфер.
+    Плюсы: простота и читабельность
+    Недостатки: при закольцовывании буфера
+    значения индексов(переменные tail_index и head_index)
+    следуют друг за другом, ссылаясь на одно и то же значение,
+    следовательно можно избавиться от одного из них
 
-class CircularBuffer:
-    def __init__(self, size):
-        self.capacity = size
-        self.data = []
-        self.head_index = 0
-        self.tail_index = 0
+    >>> buffer = FirstCircBuf(4)
+    >>> buffer.enqueue(1)
+    >>> buffer.enqueue(2)
+    >>> buffer.enqueue(3)
+    >>> buffer.enqueue(4)
+    >>> buffer.enqueue(5)
+    >>> buffer.enqueue(6)
+    >>> buffer.enqueue(7)
+    >>> buffer.enqueue(8)
+    >>> buffer.dequeue(3)
+    [5, 6, 7]
+    """
+    def __init__(self, capacity):
+        self.buffer = []
+        self.capacity = capacity
+        self.head_index = self.tail_index = 0
 
-    def write(self, value):
+    def enqueue(self, num):
 
-        if (self.tail_index < self.capacity):
-            self.data.append(value)
+        if self.tail_index >= self.capacity:
+            self.buffer[self.tail_index % self.capacity] = num
 
-        elif (self.tail_index >= self.capacity):
-            self.data[self.tail_index % self.capacity] = value
+        elif self.tail_index < self.capacity:
+            self.buffer.append(num)
 
         self.tail_index += 1
 
-        if (len(self.data) == self.capacity):
+        if len(self.buffer) == self.capacity:
             self.head_index = self.tail_index % self.capacity
 
-    def read(self, size):
-        if (size > len(self.data)):
-            return
+    def dequeue(self, size_to_read):
+        if size_to_read > len(self.buffer):
+            return None
 
-        data = []
+        result_to_read = []
 
         index = self.head_index
-        while (size > 0 and index < len(self.data)):
-            data.append(self.data[index])
+        while size_to_read > 0 and index < len(self.buffer):
+            result_to_read.append(self.buffer[index])
             index += 1
-            size -= 1
+            size_to_read -= 1
         index = 0
 
-        while (index < size):
-            data.append(self.data[index])
+        while index < size_to_read:
+            result_to_read.append(self.buffer[index])
             index += 1
+        return result_to_read
 
-        return data
 
+class SecondCircBuf:
+    """Класс кольцевой буфер.
+    Плюсы: не включает в себя избыточного числа переменных
+    Минусы: Явное лучше неявного
 
-# =============================================================================
-# № 2 c tail
-# Есть теперь лишь tail, который всегда указывает на ячейку, начиная с которой требуется записывать данные в буфер.
-# Преимущество: отсутсиве изботочного числа переменных.
-# Недостаток: труднее разобраться в коде.
-# =============================================================================
-
-class CircularBuffer:
-    def __init__(self, size):
-        self.capacity = size
-        self.data = []
+    >>> buffer = SecondCircBuf(4)
+    >>> buffer.enqueue(1)
+    >>> buffer.enqueue(2)
+    >>> buffer.enqueue(3)
+    >>> buffer.enqueue(4)
+    >>> buffer.enqueue(5)
+    >>> buffer.enqueue(6)
+    >>> buffer.enqueue(7)
+    >>> buffer.enqueue(8)
+    >>> buffer.dequeue(3)
+    [5, 6, 7]
+    """
+    def __init__(self, capacity):
+        self.buffer = []
+        self.capacity = capacity
         self.tail_index = 0
 
-    def write(self, value):
+    def enqueue(self, num):
 
-        if (self.tail_index < self.capacity):
-            self.data.append(value)
+        if self.tail_index >= self.capacity:
+            self.buffer[self.tail_index % self.capacity] = num
 
-        elif (self.tail_index >= self.capacity):
-            self.data[self.tail_index % self.capacity] = value
+        elif self.tail_index < self.capacity:
+            self.buffer.append(num)
 
         self.tail_index += 1
 
-    def read(self, size):
-        if (size > len(self.data)):
-            return
+    def dequeue(self, size):
+        if size > len(self.buffer):
+            return None
 
-        data = []
+        result_to_read = []
 
-        if (len(self.data) < self.capacity):
-            for value in self.data:
-                data.append(value)
-            return data
+        if len(self.buffer) < self.capacity:
+            for value in self.buffer:
+                result_to_read.append(value)
+            return result_to_read
 
         index = self.tail_index % self.capacity
-        while (size > 0 and index < len(self.data)):
-            data.append(self.data[index])
+        while size > 0 and index < len(self.buffer):
+            result_to_read.append(self.buffer[index])
             index += 1
             size -= 1
 
         index = 0
-        while (index < size):
-            data.append(self.data[index])
+        while index < size:
+            result_to_read.append(self.buffer[index])
             index += 1
 
-        return data
+        return result_to_read
 
 
-buffer = CircularBuffer(4)
-buffer.write(1)
-buffer.write(2)
-print(buffer.read(2))
-
-buffer.write(3)
-buffer.write(4)
-buffer.write(5)
-buffer.write(6)
-buffer.write(7)
-print(buffer.read(4))
-buffer.write(8)
-buffer.write(9)
-print(buffer.read(3))
-
-
-# =============================================================================
-# № 3 этот пример по сути идентичен предыдущему. Однако, при помощи классов
-# четко отделены два случая взаимодействия с буффером: 1. когда он еще не замкнулся 2. уже замкнулся.
-# Не стала реализовывать здесь функцию чтения куска буфера заданного размера, чтобы не отягощать пример.
-# Преимущество: при такой реализации проще разобраться в логике.
-# Недостаток: архитектура решения вышла более грамоздкой и менее производительной.
-# =============================================================================
-
-class CircularBuffer:
-    def __init__(self, size):
-        self.capacity = size
-        self.data = []
-
-    def write(self, value):
-        self.data.append(value)
-
-        if (len(self.data) == self.capacity):
-            self.count = 0
-            self.__class__ = self.__Full
-
-    def readAll(self):
-        return self.data
-
-    class __Full:
-
-        def write(self, value):
-            self.data[self.count] = value
-            self.count = (self.count + 1) % self.capacity
-
-        def readAll(self):
-            return self.data[self.count:] + self.data[: self.count]
-
-
-buffer = CircularBuffer(2)
-buffer.write(1)
-buffer.write(2)
-buffer.write(3)
-buffer.write(4)
-buffer.write(5)
-buffer.write(6)
-buffer.write(7)
-print(buffer.readAll())
-
-buffer.write(8)
-buffer.write(9)
-
-print(buffer.readAll())
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
