@@ -1,3 +1,5 @@
+![example workflow](https://github.com/buschwaker/wargaming/actions/workflows/main.yml/badge.svg)
+
 # Тестовое задание на позицию стажера (Python Development)
 
 ### Алгоритм определения четности числа
