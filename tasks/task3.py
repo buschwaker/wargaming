@@ -1,6 +1,7 @@
 import timeit
 import numpy as np
 from random import randint
+from copy import deepcopy
 
 
 def quick_sort(arr):
@@ -63,22 +64,23 @@ def merge_sort(s):
 
 
 
-# a = [randint(0, 100) for i in range(100)]
-# b = [randint(0, 100) for i in range(100)]
-#
+a = [randint(0, 100) for i in range(100)]
+# b = deepcopy(a)
+print(merge_sort(a))
 # # a = [i for i in range(100)]
 # # b = [i for i in range(100)]
 
-a = [i for i in range(100, -1, -1)]
-b = [i for i in range(100, -1, -1)]
+# a = [i for i in range(100, -1, -1)]
+# b = [i for i in range(100, -1, -1)]
 
-# print(a)
-
+print(a)
+# merge_sort(a)
 #
-mergetest = timeit.Timer(lambda: merge_sort(a))
-mergeresult = mergetest.repeat(repeat=1000, number=1)
-print(np.amin(mergeresult)*1000, np.amax(mergeresult)*1000, np.median(mergeresult)*1000, np.average(mergeresult)*1000)
-
-quicktest = timeit.Timer(lambda: quick_sort(b))
-quickresult = quicktest.repeat(repeat=1000, number=1)
-print(np.amin(quickresult)*1000, np.amax(quickresult)*1000, np.median(quickresult)*1000, np.average(quickresult)*1000)
+# mergetest = timeit.Timer(lambda: merge_sort(a))
+# mergeresult = mergetest.repeat(repeat=1000, number=1)
+# print(np.amin(mergeresult)*1000, np.amax(mergeresult)*1000, np.median(mergeresult)*1000, np.average(mergeresult)*1000)
+print(quick_sort(a))
+print(a)
+# quicktest = timeit.Timer(lambda: quick_sort(b))
+# quickresult = quicktest.repeat(repeat=1000, number=1)
+# print(np.amin(quickresult)*1000, np.amax(quickresult)*1000, np.median(quickresult)*1000, np.average(quickresult)*1000)
