@@ -17,7 +17,6 @@ jobs:
       run: |
         # обновление pip
         python -m pip install --upgrade pip
-        # установка flake8 и его плагинов
         # установка зависимостей
         pip install -r requirements.txt
     - name: Run unittests
@@ -26,6 +25,7 @@ jobs:
         python -m unittest
     - name: Test with flake8 and mypy
       run: |
+        # переход в директорию tasks
         cd tasks
         # запуск проверки проекта по flake8
         flake8 task1.py task2.py task3.py
