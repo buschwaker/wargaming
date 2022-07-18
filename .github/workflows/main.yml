@@ -21,8 +21,9 @@ jobs:
         # установка зависимостей
         pip install -r requirements.txt
 
-    - name: Test with flake8 and mypy
+    - name: Test with unittest, flake8 and mypy
       run: |
+        python -m unittest
         cd tasks
         # запуск проверки проекта по flake8
         flake8 task1.py task2.py task3.py
