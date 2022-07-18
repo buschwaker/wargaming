@@ -18,12 +18,12 @@ class FirstCircBuf:
     >>> buffer.dequeue(3)
     [5, 6, 7]
     """
-    def __init__(self, capacity):
-        self.buffer = []
+    def __init__(self, capacity: int):
+        self.buffer: list = []
         self.capacity = capacity
         self.head_index = self.tail_index = 0
 
-    def enqueue(self, num):
+    def enqueue(self, num: int):
 
         if self.tail_index >= self.capacity:
             self.buffer[self.tail_index % self.capacity] = num
@@ -36,7 +36,7 @@ class FirstCircBuf:
         if len(self.buffer) == self.capacity:
             self.head_index = self.tail_index % self.capacity
 
-    def dequeue(self, size_to_read):
+    def dequeue(self, size_to_read: int):
         if size_to_read > len(self.buffer):
             return None
 
@@ -72,12 +72,12 @@ class SecondCircBuf:
     >>> buffer.dequeue(3)
     [5, 6, 7]
     """
-    def __init__(self, capacity):
-        self.buffer = []
+    def __init__(self, capacity: int):
+        self.buffer: list = []
         self.capacity = capacity
         self.tail_index = 0
 
-    def enqueue(self, num):
+    def enqueue(self, num: int):
 
         if self.tail_index >= self.capacity:
             self.buffer[self.tail_index % self.capacity] = num
@@ -87,7 +87,7 @@ class SecondCircBuf:
 
         self.tail_index += 1
 
-    def dequeue(self, size):
+    def dequeue(self, size: int):
         if size > len(self.buffer):
             return None
 
